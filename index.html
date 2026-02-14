@@ -110,10 +110,9 @@ button {
 </div>
 
 <!-- Romantic Background Music -->
-<audio id="bgMusic" autoplay loop>
-    <source src="https://www.bensound.com/bensound-music/bensound-love.mp3" type="audio/mp3">
+<audio id="bgMusic" loop>
+    <source src="music.mp3" type="audio/mp3">
 </audio>
-
 <script>
 const noBtn = document.getElementById("noBtn");
 const yesBtn = document.getElementById("yesBtn");
@@ -163,6 +162,7 @@ noBtn.addEventListener("touchstart", function(e){
 
 // YES Click
 yesBtn.addEventListener("click", function(){
+    document.getElementById("bgMusic").play();
     document.querySelector(".buttons").style.display = "none";
     question.style.display = "none";
     result.style.display = "block";
@@ -185,4 +185,4 @@ function createHearts(num){
 </script>
 
 </body>
-</html>               
+</html>

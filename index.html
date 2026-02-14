@@ -20,7 +20,7 @@ body {
 }
 
 h1 {
-    font-size: 2.3rem;
+    font-size: 4.5rem;   /* Doubled size */
     padding: 0 20px;
     animation: glow 2s infinite alternate;
 }
@@ -48,9 +48,10 @@ button {
 #yesBtn {
     background: #ff2e63;
     color: white;
-    box-shadow: 0 0 20px white;
-    position: relative;
-    z-index: 2;
+    box-shadow: 0 0 25px white;
+    font-size: 3rem;
+    padding: 25px 50px;
+    animation: heartbeat 1.5s infinite;
 }
 
 #yesBtn:hover {
@@ -82,6 +83,14 @@ button {
     animation: floatUp 5s linear infinite;
 }
 
+@keyframes heartbeat {
+    0% { transform: scale(1); }
+    25% { transform: scale(1.15); }
+    40% { transform: scale(1); }
+    60% { transform: scale(1.15); }
+    100% { transform: scale(1); }
+}
+
 @keyframes floatUp {
     from {
         transform: translateY(100vh);
@@ -90,6 +99,17 @@ button {
     to {
         transform: translateY(-10vh);
         opacity: 0;
+    }
+}
+
+@media (max-width: 600px) {
+    h1 {
+        font-size: 2.5rem;
+    }
+
+    #yesBtn {
+        font-size: 2rem;
+        padding: 20px 35px;
     }
 }
 </style>
@@ -120,10 +140,15 @@ const result = document.getElementById("result");
 const question = document.getElementById("question");
 
 let scale = 1;
-let angle = 0;
 let attempts = 0;
+let magnetActive = true;
 
-// Progressive dialogue + revolving motion
+// Position No initially
+let noX = 200;
+let noY = 0;
+noBtn.style.left = noX + "px";
+noBtn.style.top = noY + "px";
+
 function moveNoButton() {
 
     attempts++;
@@ -137,39 +162,57 @@ function moveNoButton() {
     scale -= 0.1;
     if (scale < 0.3) scale = 0.3;
 
-    angle += 45;
-
-    const radius = 80;
-    const centerX = yesBtn.offsetLeft;
-    const centerY = yesBtn.offsetTop;
-
-    const newX = centerX + radius * Math.cos(angle * Math.PI/180);
-    const newY = centerY + radius * Math.sin(angle * Math.PI/180);
-
     noBtn.style.transform = `scale(${scale})`;
-    noBtn.style.left = newX + "px";
-    noBtn.style.top = newY + "px";
+
+    // Random escape first
+    noX = Math.random() * (window.innerWidth - 100);
+    noY = Math.random() * (window.innerHeight - 100);
+
+    noBtn.style.left = noX + "px";
+    noBtn.style.top = noY + "px";
 }
 
-// Desktop
+// Desktop + Mobile escape
 noBtn.addEventListener("mouseover", moveNoButton);
-
-// Mobile
 noBtn.addEventListener("touchstart", function(e){
     e.preventDefault();
     moveNoButton();
 });
 
-// YES Click
+// Magnetic Attraction Effect
+function magnetEffect() {
+
+    if (!magnetActive) return;
+
+    const yesRect = yesBtn.getBoundingClientRect();
+    const noRect = noBtn.getBoundingClientRect();
+
+    let dx = yesRect.left - noRect.left;
+    let dy = yesRect.top - noRect.top;
+
+    noX += dx * 0.02;  // attraction strength
+    noY += dy * 0.02;
+
+    noBtn.style.left = noX + "px";
+    noBtn.style.top = noY + "px";
+
+    requestAnimationFrame(magnetEffect);
+}
+
+magnetEffect();
+
+// YES click
 yesBtn.addEventListener("click", function(){
-    document.getElementById("bgMusic").play();
+    magnetActive = false;
     document.querySelector(".buttons").style.display = "none";
     question.style.display = "none";
     result.style.display = "block";
     createHearts(50);
+
+    document.getElementById("bgMusic").play();
 });
 
-// Floating hearts
+// Hearts
 function createHearts(num){
     for(let i=0;i<num;i++){
         let heart = document.createElement("div");
@@ -183,6 +226,5 @@ function createHearts(num){
     }
 }
 </script>
-
 </body>
 </html>

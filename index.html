@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Be My Valentine 💝</title>
+
+<style>
+body {
+    margin: 0;
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    font-family: 'Segoe UI', sans-serif;
+    background: radial-gradient(circle at top, #ff758c, #ff7eb3);
+    color: white;
+    text-align: center;
+}
+
+h1 {
+    font-size: 2.3rem;
+    padding: 0 20px;
+    animation: glow 2s infinite alternate;
+}
+
+@keyframes glow {
+    from { text-shadow: 0 0 10px white; }
+    to { text-shadow: 0 0 25px #fff; }
+}
+
+.buttons {
+    position: relative;
+    margin-top: 40px;
+    height: 200px;
+}
+
+button {
+    padding: 15px 30px;
+    font-size: 18px;
+    border: none;
+    border-radius: 30px;
+    cursor: pointer;
+    transition: 0.3s ease;
+}
+
+#yesBtn {
+    background: #ff2e63;
+    color: white;
+    box-shadow: 0 0 20px white;
+    position: relative;
+    z-index: 2;
+}
+
+#yesBtn:hover {
+    transform: scale(1.1);
+}
+
+#noBtn {
+    background: #222;
+    color: white;
+    position: absolute;
+    left: 120px;
+    top: 0;
+}
+
+#result {
+    display: none;
+    margin-top: 20px;
+}
+
+#result img {
+    width: 280px;
+    border-radius: 20px;
+    box-shadow: 0 0 25px white;
+}
+
+.heart {
+    position: absolute;
+    font-size: 22px;
+    animation: floatUp 5s linear infinite;
+}
+
+@keyframes floatUp {
+    from {
+        transform: translateY(100vh);
+        opacity: 1;
+    }
+    to {
+        transform: translateY(-10vh);
+        opacity: 0;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<h1 id="question">Ananya, will you be my Valentine? 💝</h1>
+
+<div class="buttons">
+    <button id="yesBtn">Yes 💖</button>
+    <button id="noBtn">No 😢</button>
+</div>
+
+<div id="result">
+    <h2>She said YES! 💍❤️</h2>
+    <img src="us.jpg" alt="She said yes">
+</div>
+
+<!-- Romantic Background Music -->
+<audio id="bgMusic" autoplay loop>
+    <source src="https://www.bensound.com/bensound-music/bensound-love.mp3" type="audio/mp3">
+</audio>
+
+<script>
+const noBtn = document.getElementById("noBtn");
+const yesBtn = document.getElementById("yesBtn");
+const result = document.getElementById("result");
+const question = document.getElementById("question");
+
+let scale = 1;
+let angle = 0;
+let attempts = 0;
+
+// Progressive dialogue + revolving motion
+function moveNoButton() {
+
+    attempts++;
+
+    if (attempts === 1) {
+        question.innerText = "Are you sure? 😏";
+    } else if (attempts === 2) {
+        question.innerText = "Think again 😌";
+    }
+
+    scale -= 0.1;
+    if (scale < 0.3) scale = 0.3;
+
+    angle += 45;
+
+    const radius = 80;
+    const centerX = yesBtn.offsetLeft;
+    const centerY = yesBtn.offsetTop;
+
+    const newX = centerX + radius * Math.cos(angle * Math.PI/180);
+    const newY = centerY + radius * Math.sin(angle * Math.PI/180);
+
+    noBtn.style.transform = `scale(${scale})`;
+    noBtn.style.left = newX + "px";
+    noBtn.style.top = newY + "px";
+}
+
+// Desktop
+noBtn.addEventListener("mouseover", moveNoButton);
+
+// Mobile
+noBtn.addEventListener("touchstart", function(e){
+    e.preventDefault();
+    moveNoButton();
+});
+
+// YES Click
+yesBtn.addEventListener("click", function(){
+    document.querySelector(".buttons").style.display = "none";
+    question.style.display = "none";
+    result.style.display = "block";
+    createHearts(50);
+});
+
+// Floating hearts
+function createHearts(num){
+    for(let i=0;i<num;i++){
+        let heart = document.createElement("div");
+        heart.classList.add("heart");
+        heart.innerHTML = "💖";
+        heart.style.left = Math.random()*100 + "vw";
+        heart.style.animationDuration = (Math.random()*3+2) + "s";
+        document.body.appendChild(heart);
+
+        setTimeout(()=>heart.remove(),5000);
+    }
+}
+</script>
+
+</body>
+</html>               
